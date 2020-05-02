@@ -58,7 +58,7 @@ namespace MVCApp.Controllers
                         {
                             stream.CopyTo(fileStream);
                         }
-                        // Once the file part is saved, see if we have enough to merge it
+                        // Once the file part is saved, see if we have enough txo merge it
                         Shared.Utils UT = new Shared.Utils();
                         UT.MergeFile(path);
                     }
