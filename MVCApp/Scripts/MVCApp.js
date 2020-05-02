@@ -4,11 +4,10 @@
         UploadFile($('#uploadFile')[0].files);
     }
     )
-
 });
 
 
-function UploadFileChunk(Chunk, FileName) {
+function UploadFileChunk(Chunk, FileName, TotalParts) {
     var FD = new FormData();
     FD.append('file', Chunk, FileName);
     $.ajax({
@@ -19,20 +18,19 @@ function UploadFileChunk(Chunk, FileName) {
         data: FD,
         xhr: function () {
             var xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener("progress", function (e) {
-                if (e.lengthComputable) {
-                    var percentComplete = (e.loaded / e.total) * 100;
-                    console.log(percentComplete + '% uploaded', e);
-                    $('#uploadFile').html('Uploading... ' + percentComplete + '%');
-                    $('.progress-bar').css('width', percentComplete + '%')
-                        .attr('aria-valuenow', percentComplete);
-                    $("#percentageText").text(Math.round(percentComplete) + "%");
+            xhr.upload.addEventListener("progress", function (e, data) {
+                if (e.lengthComputable) { 
+                    //console.log("progress:", $('#counter').val());
+                    //$('#uploadFile').html('Uploading... ' + percentComplete + '%');
+                    //$('.progress-bar').css('width', percentComplete + '%')
+                    //    .attr('aria-valuenow', percentComplete);
+                    //$("#percentageText").text(Math.round(percentComplete) + "%");
                 }
                 else $('#uploadFile').html('hmmm');
             }, false);
             return xhr;
         },
-        success: function (data) {
+        success: function (data, textStatus, jqXHR) {
             //myApp.hidePleaseWait(); //hide dialog
             //$('.progress-bar').width(100);
 
@@ -45,6 +43,11 @@ function UploadFileChunk(Chunk, FileName) {
             //    var errors = data['errors'];
             //    displayValidationErrors(errors);
             //}
+
+            var count = parseInt($('#counter').val()) + 1;
+            $('#counter').val(count);   
+
+            console.log("success:", Math.floor($('#counter').val() / $('#total').val() * 100));
         },
         error: function (xhr, ajaxOptions, thrownError) {
             myApp.hidePleaseWait(); //hide dialog
@@ -55,6 +58,8 @@ function UploadFileChunk(Chunk, FileName) {
 }
 
 function UploadFile(TargetFile) {
+    $('#counter').val(0)
+
     // create array to store the buffer chunks
     var FileChunk = [];
     // the file object itself that we will work with
@@ -77,6 +82,9 @@ function UploadFile(TargetFile) {
     }
     // get total number of "files" we will be sending
     var TotalParts = FileChunk.length;
+
+    $('#total').val(TotalParts);
+
     var PartCount = 0;
     // loop through, pulling the first item from the array each time and sending it
     while (chunk = FileChunk.shift()) {
@@ -84,6 +92,6 @@ function UploadFile(TargetFile) {
         // file name convention
         var FilePartName = file.name + ".part_" + PartCount + "." + TotalParts;
         // send the file
-        UploadFileChunk(chunk, FilePartName);
+        UploadFileChunk(chunk, FilePartName, PartCount, TotalParts);
     }
 }
