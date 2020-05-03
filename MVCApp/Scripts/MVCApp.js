@@ -1,7 +1,11 @@
 ﻿$(document).ready(function () {
 
     $('#btnUpload').click(function () {
-        UploadFile($('#uploadFile')[0].files);
+        var filesToUpload = $('#uploadFile')[0].files;
+
+        for (var i = 0; i < filesToUpload.length; i++) {
+            UploadFile(filesToUpload[i]);
+        }
     }
     )
 });
@@ -63,7 +67,7 @@ function UploadFile(TargetFile) {
     // create array to store the buffer chunks
     var FileChunk = [];
     // the file object itself that we will work with
-    var file = TargetFile[0];
+    var file = TargetFile;
     // set up other initial vars
     var MaxFileSizeMB = 1;
     var BufferChunkSize = MaxFileSizeMB * (1024 * 1024);

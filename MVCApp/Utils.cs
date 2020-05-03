@@ -79,6 +79,10 @@ namespace Shared
                                 // handle                                
                             }
                         }
+                        foreach (var chunk in MergeOrder)
+                        {
+                            File.Delete(chunk.FileName);
+                        }
                     }
                     rslt = true;
                     // unlock the file from singleton
