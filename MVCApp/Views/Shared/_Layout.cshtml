@@ -40,5 +40,9 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        var base_url = "@Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")"
+    </script>
 </body>
 </html>

@@ -34,7 +34,7 @@ function UploadFileChunk(Chunk, FileName, TotalParts) {
     FD.append('file', Chunk, FileName);
     $.ajax({
         type: "POST",
-        url: 'http://localhost:8170/Home/UploadFile/',
+        url: base_url + 'Home/UploadFile/',
         contentType: false,
         processData: false,
         data: FD,
@@ -87,8 +87,8 @@ function UploadFileChunk(Chunk, FileName, TotalParts) {
         },
         error: function (xhr, ajaxOptions, thrownError) {
             myApp.hidePleaseWait(); //hide dialog
-            //alert(xhr.responseText);
-            displayValidationErrors(xhr.responseText)
+            alert(xhr.responseText);
+            //displayValidationErrors(xhr.responseText)
         }
     });
 }
