@@ -3,15 +3,51 @@
 }
 <h2>@ViewBag.Title.</h2>
 
+<style type="text/css">
+    .progress {
+        position: relative;
+    }
+
+    .bar {
+        z-index: 1;
+        position: absolute;
+    }
+
+    .progress span {
+        position: absolute;
+        top: 0;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+        color: black;
+    }
+</style>
 
 <p>The following code demonstrates partitioning/splitting a large file into chunks and streaming them to the server</p>
 
 
-<input type="file" id="uploadFile" multiple name="file" />  
+<input type="file" id="uploadFile" multiple name="file" />
 <a href="#" id="btnUpload" class="btn btn-primary">Upload file</a>
 
-<input type="number" id="counter" value="0"/>
+<input type="number" id="counter" value="0" />
 <input type="number" id="total" value="0" />
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>Upload datoteka...</h1>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <span id="percentageText">0%</span>
+                    <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section scripts{
     <script type="text/javascript" src="@Url.Content("/Scripts/MVCApp.js")"></script>

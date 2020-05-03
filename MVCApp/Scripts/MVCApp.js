@@ -3,6 +3,24 @@
     $('#btnUpload').click(function () {
         var filesToUpload = $('#uploadFile')[0].files;
 
+        // izračuna ukupnu mb fajlova zbog ukupnog broja partova (1 part = 1MB)
+        //$('#total').val(TotalParts);
+
+        var totalByteLength = 0;
+
+        for (var i = 0; i < filesToUpload.length; i++) {
+           totalByteLength += filesToUpload[i].size;
+        }
+
+        $('#total').val(totalByteLength / 1024 / 1024);
+        $('#counter').val(0);
+
+        $('.progress-bar').css('width', '0%')
+            .attr('aria-valuenow', 0);
+        $("#percentageText").text("0%");
+
+        myApp.showPleaseWait(); 
+
         for (var i = 0; i < filesToUpload.length; i++) {
             UploadFile(filesToUpload[i]);
         }
@@ -51,7 +69,21 @@ function UploadFileChunk(Chunk, FileName, TotalParts) {
             var count = parseInt($('#counter').val()) + 1;
             $('#counter').val(count);   
 
-            console.log("success:", Math.floor($('#counter').val() / $('#total').val() * 100));
+            //console.log("success:", Math.floor($('#counter').val() / $('#total').val() * 100));
+            console.log("success:", $('#counter').val(), $('#total').val());
+
+            var percentage = Math.floor($('#counter').val() / $('#total').val() * 100);
+            percentage = percentage > 100 ? 100 : percentage;
+
+            $('.progress-bar').css('width', percentage + '%')
+                .attr('aria-valuenow', percentage);
+            $("#percentageText").text(Math.round(percentage) + "%");
+
+            if (percentage === 100) {
+                myApp.hidePleaseWait(); //hide dialog
+            }
+
+            console.log("success:", percentage);
         },
         error: function (xhr, ajaxOptions, thrownError) {
             myApp.hidePleaseWait(); //hide dialog
@@ -62,8 +94,6 @@ function UploadFileChunk(Chunk, FileName, TotalParts) {
 }
 
 function UploadFile(TargetFile) {
-    $('#counter').val(0)
-
     // create array to store the buffer chunks
     var FileChunk = [];
     // the file object itself that we will work with
@@ -87,8 +117,6 @@ function UploadFile(TargetFile) {
     // get total number of "files" we will be sending
     var TotalParts = FileChunk.length;
 
-    $('#total').val(TotalParts);
-
     var PartCount = 0;
     // loop through, pulling the first item from the array each time and sending it
     while (chunk = FileChunk.shift()) {
@@ -99,3 +127,18 @@ function UploadFile(TargetFile) {
         UploadFileChunk(chunk, FilePartName, PartCount, TotalParts);
     }
 }
+
+var myApp;
+myApp = myApp || (function () {
+    var pleaseWaitDiv = $('#exampleModal');
+
+    return {
+        showPleaseWait: function () {
+            pleaseWaitDiv.modal();
+        },
+        hidePleaseWait: function () {
+            pleaseWaitDiv.modal('hide');
+        },
+
+    };
+})()
